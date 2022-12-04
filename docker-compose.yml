@@ -12,7 +12,7 @@ services:
           - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
           - --entrypoints.web.address=:80
           - --entrypoints.websecure.address=:443
-          - "--entryPoints.traefik.address=:9090"
+          - "--entryPoints.traefik.address=:8080"
           - --providers.docker=true
           - --providers.file.directory=/etc/traefik/dynamic_conf
           - --providers.file.watch=true
@@ -23,7 +23,7 @@ services:
       # HTTPS
       - "443:443"
       # The Web UI (enabled by --api.insecure=true)
-      - "9090:9090"
+      - "8080:8080"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
