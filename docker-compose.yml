@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  reverse-proxy:
+    # The official v2 Traefik docker image
+    image: traefik:latest
+    # Enables the web UI and tells Traefik to listen to docker
+    command: 
+          - --api.insecure=true
+          - --api.dashboard=true
+          - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+          - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+          - --entrypoints.web.address=:80
+          - --entrypoints.websecure.address=:443
+          - "--entryPoints.traefik.address=:9090"
+          - --providers.docker=true
+          - --providers.file.directory=/etc/traefik/dynamic_conf
+          - --providers.file.watch=true
+          - --serversTransport.insecureSkipVerify=true
+    ports:
+      # The HTTP port
+      - "80:80"
+      # HTTPS
+      - "443:443"
+      # The Web UI (enabled by --api.insecure=true)
+      - "9090:9090"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/traefik/certs/:/etc/traefik/certs/:ro
+      - /etc/traefik/traefik.yml:/etc/traefik/dynamic_conf/conf.yml:ro
+    restart: always
